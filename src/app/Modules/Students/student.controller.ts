@@ -1,11 +1,21 @@
 import { Request, Response } from 'express';
 import { StudentServices } from './student.service';
+import studentSchema from './student.velidators';
 
 const createStudent = async (req: Request, res: Response) => {
   try {
     const student = req.body.student;
+    const { error, value } = studentSchema.validate(student);
 
-    const result = await StudentServices.createStudentIntoDB(student);
+    if (error) {
+      res.status(400).json({
+        success: false,
+        message: 'Somethings went wrong',
+        error: error.details,
+      });
+    }
+
+    const result = await StudentServices.createStudentIntoDB(value);
 
     res.status(200).json({
       success: true,
@@ -13,7 +23,11 @@ const createStudent = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    res.status(400).json({
+      success: false,
+      message: 'Somethings went wrong',
+      data: error,
+    });
   }
 };
 
@@ -27,7 +41,11 @@ const getAllStudent = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    res.status(400).json({
+      success: false,
+      message: 'Somethings went wrong',
+      data: error,
+    });
   }
 };
 
@@ -42,7 +60,11 @@ const getStudentByID = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    res.status(400).json({
+      success: false,
+      message: 'Somethings went wrong',
+      data: error,
+    });
   }
 };
 
